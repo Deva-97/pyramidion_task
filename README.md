@@ -12,7 +12,7 @@ A Flutter app that recreates the "Shop by Categories" circular home UI with anim
 - Accessibility semantics for screen readers.
 
 **Demo**
-- Video: `https://drive.google.com/file/d/1b2eNcLCVaaHFVVRvwBAhTSDGg4tbLsPg/view?usp=sharing`
+- Video: (https://drive.google.com/file/d/1F9qYEYCRQZk-j3c0KboQkaLbpha3Gn1j/view?usp=sharing)
 
 **Tools & Tech**
 - Flutter (Dart)
