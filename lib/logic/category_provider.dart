@@ -11,17 +11,22 @@ class CategoryProvider extends ChangeNotifier{
   CategoryStatus _status = CategoryStatus.initial;
   List<CategoryModel> _categories = [];
   String _errorMessage = '';
+  bool _usedCache = false;
 
   CategoryStatus get status => _status;
   List<CategoryModel> get categories => _categories;
   String get errorMessage => _errorMessage;
+  bool get usedCache => _usedCache;
 
   Future<void> fetchCategories() async {
     _status = CategoryStatus.loading;
+    _usedCache = false;
     notifyListeners();
 
     try{
-      _categories = await _repository.fetchCategories();
+      final result = await _repository.fetchCategoriesWithSource();
+      _categories = result.items;
+      _usedCache = result.usedCache;
       _status = CategoryStatus.success;
     }catch (e){
       _errorMessage = 'Unable to load categories';

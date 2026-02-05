@@ -7,24 +7,49 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:pyramidion_task/main.dart';
+import 'package:provider/provider.dart';
+import 'package:pyramidion_task/core/network/api_service.dart';
+import 'package:pyramidion_task/data/models/category_model.dart';
+import 'package:pyramidion_task/data/repositories/category_repository.dart';
+import 'package:pyramidion_task/logic/category_provider.dart';
+import 'package:pyramidion_task/presentation/screens/home_screen.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyTask());
+  testWidgets('HomeScreen renders categories from provider',
+      (WidgetTester tester) async {
+    final provider = CategoryProvider(_FakeRepository());
+    await provider.fetchCategories();
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    await tester.pumpWidget(
+      ChangeNotifierProvider<CategoryProvider>.value(
+        value: provider,
+        child: const MaterialApp(
+          home: HomeScreen(),
+        ),
+      ),
+    );
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    expect(find.text('Shop by Categories'), findsOneWidget);
+    expect(find.text('Chair'), findsOneWidget);
   });
+}
+
+class _FakeRepository extends CategoryRepository {
+  _FakeRepository() : super(ApiService());
+
+  @override
+  Future<CategoriesResult> fetchCategoriesWithSource() async {
+    return CategoriesResult(
+      usedCache: false,
+      items: [
+        CategoryModel(
+          id: '1',
+          name: 'Chair',
+          imageUrl: '',
+        ),
+      ],
+    );
+  }
 }
